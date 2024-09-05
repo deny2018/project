@@ -1,2 +1,3 @@
 # project
-大宝剑
+allow you;
+deny all;
