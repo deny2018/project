@@ -51,7 +51,7 @@ jobs:
         run: |
           # 查询状态为 'running' 且标签为 'Name=GitHub-EC2' 的实例 ID
           INSTANCE_ID=$(aws ec2 describe-instances \
-          --filters "Name=tag:Name,Values=GitHub-EC2" "Name=instance-state-name,Values=running" \
+          --filters "Name=tag:Name,Values=GitHub-EC2" \
           --query 'Reservations[0].Instances[0].InstanceId' \
           --output text)
 
