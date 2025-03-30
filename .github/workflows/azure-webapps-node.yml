@@ -32,7 +32,6 @@ jobs:
             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub-EC2}]' \
             --query 'Instances[0].InstanceId' \
             --output text)
-          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
           echo "EC2 Instance $INSTANCE_ID created."
 
   destroy-ec2:
@@ -47,12 +46,23 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: Wait for EC2 Instance to be Running
+
+      - name: Find and Terminate EC2 Instance
         run: |
-          echo "Waiting for instance $INSTANCE_ID to be in running state..."
+          # 查询状态为 'running' 且标签为 'Name=GitHub-EC2' 的实例 ID
+          INSTANCE_ID=$(aws ec2 describe-instances \
+          --filters "Name=tag:Name,Values=GitHub-EC2" "Name=instance-state-name,Values=running" \
+          --query 'Reservations[0].Instances[0].InstanceId' \
+          --output text)
+
+          # 输出查询到的实例 ID
+          echo "Found instance ID: $INSTANCE_ID"
 
 
-      - name: Terminate EC2 Instance
-        run: |
-          aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-          echo "EC2 Instance $INSTANCE_ID terminated."
+          # 如果实例存在，终止实例
+          if [ "$INSTANCE_ID" != "None" ]; then
+            echo "Terminating EC2 instance: $INSTANCE_ID"
+            aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+          else
+            echo "No running instance found to terminate."
+          fi
