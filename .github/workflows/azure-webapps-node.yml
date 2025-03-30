@@ -25,10 +25,10 @@ jobs:
         id: create-instance
         run: |
           INSTANCE_ID=$(aws ec2 run-instances \
-            --image-id ami-0abcdef1234567890 \  # 替换为你的 AMI ID
+            --image-id ami-08b5b3a93ed654d19 \  # 替换为你的 AMI ID
             --instance-type t2.micro \
-            --key-name my-key-pair \  # 替换为你的密钥对名称
-            --security-groups my-security-group \  # 替换为你的安全组
+            --key-name aws-ec2 \  # 替换为你的密钥对名称
+            --security-groups sg-0685882e21cc815f3 \  # 替换为你的安全组
             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub-EC2}]' \
             --query 'Instances[0].InstanceId' \
             --output text)
