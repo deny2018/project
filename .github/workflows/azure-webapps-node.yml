@@ -50,8 +50,7 @@ jobs:
       - name: Wait for EC2 Instance to be Running
         run: |
           echo "Waiting for instance $INSTANCE_ID to be in running state..."
-          aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-          echo "Instance $INSTANCE_ID is now running."
+
 
       - name: Terminate EC2 Instance
         run: |
