@@ -14,18 +14,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Verify AWS CLI Version
-        run: aws --version  # 确保 AWS CLI 已安装
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Validate AWS Credentials
-        run: aws s3 ls
 
       - name: Launch EC2 Instance
         id: create-instance
@@ -34,7 +28,7 @@ jobs:
             --image-id ami-08b5b3a93ed654d19 \  # 替换为你的 AMI ID
             --instance-type t2.micro \
             --key-name aws-ec2 \  # 替换为你的密钥对名称
-            --security-groups sg-0685882e21cc815f3 \  # 替换为你的安全组
+            --security-group-ids sg-0685882e21cc815f3 \  # 替换为你的安全组
             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub-EC2}]' \
             --query 'Instances[0].InstanceId' \
             --output text)
